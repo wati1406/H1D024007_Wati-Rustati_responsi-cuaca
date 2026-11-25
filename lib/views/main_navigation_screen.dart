@@ -3,14 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:responsi_cuaca/viewmodels/favorites_viewmodel.dart';
 import 'package:responsi_cuaca/views/favorites_screen.dart';
 import 'package:responsi_cuaca/views/search_screen.dart';
-import 'package:responsi_cuaca/views/settings_screen.dart';
 import 'package:responsi_cuaca/views/weather_screen.dart';
 
-// Layar Utama yang menampung NavigationBar dengan 4 tab:
-// 1. Cuaca (WeatherScreen)
+// Layar Utama yang menampung NavigationBar dengan 3 tab:
+// 1. Cuaca (WeatherScreen) - Dilengkapi tombol kecil pengatur suhu (°C/°F) & tema (Sistem/Gelap)
 // 2. Cari (SearchScreen)
-// 3. Favorit (FavoritesScreen)
-// 4. Pengaturan (SettingsScreen)
+// 3. Favorit (FavoritesScreen) - Khusus daftar lokasi favorit
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
 
@@ -37,7 +35,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       FavoritesScreen(
         onLocationChosen: _navigateToWeatherTab,
       ),
-      const SettingsScreen(),
     ];
 
     return Scaffold(
@@ -71,11 +68,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             icon: Icon(Icons.favorite_outline),
             selectedIcon: Icon(Icons.favorite),
             label: 'Favorit',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: 'Pengaturan',
           ),
         ],
       ),
