@@ -1,14 +1,11 @@
-// Model representasi data cuaca Open-Meteo Forecast API
-// Sesuai seluruh field yang disyaratkan oleh PDF responsi.
-
 class CurrentWeather {
-  final double temperature2m; // current.temperature_2m (Suhu saat ini)
-  final int relativeHumidity2m; // current.relative_humidity_2m (Kelembapan)
-  final double apparentTemperature; // current.apparent_temperature (Suhu yang dirasakan)
-  final double precipitation; // current.precipitation (Curah hujan)
-  final int weatherCode; // current.weather_code (Kode kondisi cuaca)
-  final double windSpeed10m; // current.wind_speed_10m (Kecepatan angin)
-  final String time; // Waktu data cuaca
+  final double temperature2m;
+  final int relativeHumidity2m;
+  final double apparentTemperature;
+  final double precipitation;
+  final int weatherCode;
+  final double windSpeed10m;
+  final String time;
 
   CurrentWeather({
     required this.temperature2m,
@@ -37,10 +34,9 @@ class CurrentWeather {
 class DailyForecastItem {
   final String date;
   final int weatherCode;
-  final double tempMax; // daily.temperature_2m_max (Suhu maksimum harian)
-  final double tempMin; // daily.temperature_2m_min (Suhu minimum harian)
-  final int
-  precipitationProbabilityMax; // daily.precipitation_probability_max (Peluang hujan maksimum)
+  final double tempMax;
+  final double tempMin;
+  final int precipitationProbabilityMax;
 
   DailyForecastItem({
     required this.date,
@@ -51,14 +47,14 @@ class DailyForecastItem {
   });
 }
 
-class DailyWeather {
+class DailyForecast {
   final List<String> time;
   final List<int> weatherCode;
   final List<double> temperature2mMax;
   final List<double> temperature2mMin;
   final List<int> precipitationProbabilityMax;
 
-  DailyWeather({
+  DailyForecast({
     required this.time,
     required this.weatherCode,
     required this.temperature2mMax,
@@ -66,8 +62,8 @@ class DailyWeather {
     required this.precipitationProbabilityMax,
   });
 
-  factory DailyWeather.fromJson(Map<String, dynamic> json) {
-    return DailyWeather(
+  factory DailyForecast.fromJson(Map<String, dynamic> json) {
+    return DailyForecast(
       time: List<String>.from(json['time'] ?? []),
       weatherCode: (json['weather_code'] as List? ?? [])
           .map((e) => (e as num).toInt())
@@ -85,10 +81,10 @@ class DailyWeather {
     );
   }
 
-  // Helper untuk mengubah array paralel menjadi list item per hari yang mudah dipakai ListView
   List<DailyForecastItem> toForecastItems() {
-    final items = <DailyForecastItem>[];
-    for (int i = 0; i < time.length; i++) {
+    final List<DailyForecastItem> items = [];
+    final count = time.length;
+    for (int i = 0; i < count; i++) {
       items.add(
         DailyForecastItem(
           date: time[i],
@@ -110,7 +106,7 @@ class WeatherModel {
   final double longitude;
   final String timezone;
   final CurrentWeather current;
-  final DailyWeather daily;
+  final DailyForecast daily;
 
   WeatherModel({
     required this.latitude,
@@ -124,11 +120,11 @@ class WeatherModel {
     return WeatherModel(
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
       longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
-      timezone: json['timezone'] as String? ?? 'auto',
+      timezone: json['timezone'] as String? ?? '',
       current: CurrentWeather.fromJson(
         json['current'] as Map<String, dynamic>? ?? {},
       ),
-      daily: DailyWeather.fromJson(
+      daily: DailyForecast.fromJson(
         json['daily'] as Map<String, dynamic>? ?? {},
       ),
     );

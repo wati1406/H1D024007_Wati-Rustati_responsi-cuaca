@@ -5,9 +5,6 @@ import 'package:responsi_cuaca/services/weather_service.dart';
 
 enum SearchState { initial, loading, loaded, empty, error }
 
-// ViewModel untuk fitur pencarian lokasi kota.
-// Mengatur state pencarian, pemanggilan Geocoding API via WeatherService,
-// serta sinkronisasi riwayat dan favorit lewat StorageService.
 class SearchViewModel extends ChangeNotifier {
   final WeatherService _weatherService;
   final StorageService _storageService;
@@ -37,13 +34,11 @@ class SearchViewModel extends ChangeNotifier {
   bool get isError => _state == SearchState.error;
   bool get isLoaded => _state == SearchState.loaded;
 
-  // Memuat riwayat pencarian dari SharedPreferences
   void loadSearchHistory() {
     _searchHistory = _storageService.getSearchHistory();
     notifyListeners();
   }
 
-  // Melakukan HTTP GET ke Open-Meteo Geocoding API
   Future<void> searchLocations(String query) async {
     final clean = query.trim();
     _currentQuery = clean;
@@ -64,31 +59,28 @@ class SearchViewModel extends ChangeNotifier {
       _searchResults = results;
 
       if (results.isEmpty) {
-        _state = SearchState.empty; // Kondisi data kosong
+        _state = SearchState.empty;
       } else {
         _state = SearchState.loaded;
       }
     } catch (e) {
       _errorMessage = e.toString().replaceFirst('Exception: ', '');
-      _state = SearchState.error; // Kondisi error
+      _state = SearchState.error;
     } finally {
       notifyListeners();
     }
   }
 
-  // Coba lagi pencarian terakhir saat kondisi error
   Future<void> retrySearch() async {
     if (_currentQuery.isNotEmpty) {
       await searchLocations(_currentQuery);
     }
   }
 
-  // Cek apakah suatu lokasi sudah ada di favorit
   bool isFavorite(LocationModel location) {
     return _storageService.isFavorite(location);
   }
 
-  // Toggle status favorit untuk lokasi tertentu
   Future<void> toggleFavorite(LocationModel location) async {
     if (isFavorite(location)) {
       await _storageService.removeFavorite(location);
@@ -98,14 +90,11 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Simpan ke riwayat dan local storage saat pengguna memilih kota
   Future<void> onLocationSelected(LocationModel location) async {
     await _storageService.addToSearchHistory(location);
-    await _storageService.saveLastSelectedLocation(location);
     loadSearchHistory();
   }
 
-  // Hapus seluruh riwayat pencarian
   Future<void> clearHistory() async {
     await _storageService.clearSearchHistory();
     loadSearchHistory();

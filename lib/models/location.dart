@@ -1,12 +1,10 @@
-// Model representasi data lokasi dari Open-Meteo Geocoding API
-// dan untuk penyimpanan lokal (SharedPreferences).
 class LocationModel {
   final int id;
   final String name;
   final double latitude;
   final double longitude;
   final String? country;
-  final String? admin1; // Provinsi / Wilayah
+  final String? admin1;
   final String? countryCode;
 
   LocationModel({
@@ -19,7 +17,6 @@ class LocationModel {
     this.countryCode,
   });
 
-  // Format tampilan lengkap: "Nama Kota, Provinsi, Negara"
   String get fullDisplayName {
     final parts = [name];
     if (admin1 != null && admin1!.isNotEmpty && admin1 != name) {
@@ -31,7 +28,6 @@ class LocationModel {
     return parts.join(', ');
   }
 
-  // Dari JSON Geocoding API Open-Meteo
   factory LocationModel.fromOpenMeteoJson(Map<String, dynamic> json) {
     return LocationModel(
       id: json['id'] is int ? json['id'] as int : (json['name'].hashCode),
@@ -44,7 +40,6 @@ class LocationModel {
     );
   }
 
-  // Untuk serialisasi ke SharedPreferences (Local Storage)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -57,7 +52,6 @@ class LocationModel {
     };
   }
 
-  // Dari JSON SharedPreferences (Local Storage)
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
       id: json['id'] as int? ?? 0,

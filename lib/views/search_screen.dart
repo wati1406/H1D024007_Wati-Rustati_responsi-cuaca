@@ -4,10 +4,6 @@ import 'package:responsi_cuaca/models/location.dart';
 import 'package:responsi_cuaca/viewmodels/search_viewmodel.dart';
 import 'package:responsi_cuaca/viewmodels/weather_viewmodel.dart';
 
-// View: Search / Location Screen
-// Menyediakan kolom pencarian kota ke Open-Meteo Geocoding API,
-// menampilkan hasil pencarian, daftar riwayat pencarian, dan tombol simpan favorit.
-// Menerapkan MVVM: View hanya membaca state dari SearchViewModel & WeatherViewModel.
 class SearchScreen extends StatefulWidget {
   final VoidCallback onLocationChosen;
 
@@ -27,15 +23,12 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _onSelect(LocationModel location) {
-    // 1. Simpan ke riwayat dan local storage via SearchViewModel
     final searchVm = context.read<SearchViewModel>();
     searchVm.onLocationSelected(location);
 
-    // 2. Set lokasi terpilih dan ambil cuaca via WeatherViewModel
     final weatherVm = context.read<WeatherViewModel>();
     weatherVm.selectLocation(location);
 
-    // 3. Pindah ke Weather Screen
     widget.onLocationChosen();
   }
 
@@ -50,7 +43,6 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       body: Column(
         children: [
-          // INPUT PENCARIAN
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextField(
@@ -77,12 +69,9 @@ class _SearchScreenState extends State<SearchScreen> {
               },
             ),
           ),
-
-          // KONTEN HASIL PENCARIAN ATAU RIWAYAT
           Expanded(
             child: Consumer<SearchViewModel>(
               builder: (context, vm, child) {
-                // 1. KONDISI LOADING
                 if (vm.isLoading) {
                   return Center(
                     child: Column(
@@ -99,7 +88,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 }
 
-                // 2. KONDISI ERROR
                 if (vm.isError) {
                   return Center(
                     child: Padding(
@@ -131,7 +119,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 }
 
-                // 3. KONDISI DATA KOSONG (Query dicari tapi tidak ada hasil)
                 if (vm.isEmpty) {
                   return Center(
                     child: Padding(
@@ -157,7 +144,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 }
 
-                // 4. HASIL PENCARIAN DITEMUKAN
                 if (vm.isLoaded && vm.searchResults.isNotEmpty) {
                   return ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -194,7 +180,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 }
 
-                // 5. TAMPILAN AWAL: TAMPILKAN RIWAYAT PENCARIAN TERAKHIR
                 if (vm.searchHistory.isNotEmpty) {
                   return ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -239,7 +224,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 }
 
-                // JIKA BELUM ADA RIWAYAT & BELUM MENCARI
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),

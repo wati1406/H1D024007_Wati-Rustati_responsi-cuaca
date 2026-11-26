@@ -1,145 +1,178 @@
-# Responsi Pemrograman Flutter - Aplikasi Cuaca Open-Meteo
+# Responsi Pemrograman Mobile - Aplikasi Cuaca Open-Meteo
 
-Aplikasi Cuaca berbasis Flutter yang mengimplementasikan arsitektur **Model-View-ViewModel (MVVM)**, **State Management Provider**, **Local Storage (SharedPreferences)**, dan integrasi penuh dengan **Open-Meteo REST API** (Geocoding API dan Forecast API).
+Aplikasi cuaca berbasis Flutter (Dart) yang menerapkan arsitektur **Model-View-ViewModel (MVVM)**, state management **Provider (ChangeNotifier)**, local storage **SharedPreferences**, dan integrasi dengan **Open-Meteo REST API** (Geocoding API dan Forecast API).
 
 ---
 
 ## Identitas Pengembang
-- **Nama**  : [Nama Lengkap Anda]
-- **NIM**   : [Nomor Induk Mahasiswa]
-- **Shift** : [Shift Praktikum]
+
+- **Nama** : Wati Rustati
+- **NIM** : H1D024007
+- **Shift Awal** : B
+- **Shift Akhir** : F
+- **Link Video Penjelasan** : [Tonton video penjelasan kode](https://drive.google.com/file/d/1__xiFA4OVBAkN-IfHW0EbhrYEnVRDlWn/view?usp=sharing)
 
 ---
 
 ## 1. Deskripsi Singkat Aplikasi
-Aplikasi ini memungkinkan pengguna untuk memantau prakiraan cuaca terkini dan prakiraan harian (7 hari ke depan) berdasarkan lokasi kota di seluruh dunia. Aplikasi ini dilengkapi dengan:
-- **Cuaca Terkini**: Menampilkan suhu saat ini, kondisi cuaca (ikon & deskripsi WMO), suhu yang dirasakan (*apparent temperature*), kelembapan udara, kecepatan angin, curah hujan, dan kemungkinan hujan.
-- **Pencarian Kota Real-time**: Menggunakan Open-Meteo Geocoding API untuk mencari koordinat dan data geografis kota secara dinamis.
-- **Local Storage Terintegrasi**: Menyimpan lokasi favorit dan riwayat pencarian menggunakan `shared_preferences` sehingga data tetap tersimpan saat aplikasi ditutup dan dibuka kembali.
-- **Manajemen State Reaktif**: Menggunakan `Provider` (`ChangeNotifier`) untuk menangani siklus hidup tampilan (*Loading*, *Loaded*, *Empty*, dan *Error* dengan tombol *Coba Lagi*).
-- **Pengaturan Satuan & Tema**: Mendukung konversi satuan suhu (°C / °F) langsung ke parameter API serta penyesuaian tema Material 3 (Sistem, Terang, Gelap).
+
+Aplikasi ini memungkinkan pengguna memantau cuaca terkini dan prakiraan harian (7 hari ke depan) berdasarkan kota di seluruh dunia.
+
+- **Cuaca Terkini**: menampilkan nama kota, foto latar yang menyesuaikan kondisi cuaca (cerah, berawan, gerimis, hujan, badai), suhu saat ini, kondisi cuaca WMO (teks dan ikon), suhu yang dirasakan, kelembapan udara, kecepatan angin, curah hujan, dan kemungkinan hujan.
+- **Pencarian Kota**: memakai Open-Meteo Geocoding API untuk mencari koordinat kota secara dinamis, tanpa data statis.
+- **Local Storage**: menyimpan lokasi favorit, riwayat pencarian, dan lokasi terakhir dengan `shared_preferences`, sehingga data tetap ada saat aplikasi ditutup dan dibuka kembali.
+- **State Management Reaktif**: `Provider` (`ChangeNotifier`) mengelola kondisi tampilan: *Loading*, *Loaded*, *Empty*, dan *Error* (dengan tombol *Coba Lagi*).
+- **Pengaturan Satuan Suhu dan Tema**: chip satuan suhu (°C / °F) dikirim ke parameter API `temperature_unit`, dan tombol tema (Sistem / Mode Gelap) tersedia di header aplikasi.
 
 ---
 
-## 2. Struktur Folder Proyek (MVVM Architecture)
+## 2. Teknologi dan Library
+
+| Komponen | Keterangan |
+|---|---|
+| Bahasa / Framework | Dart dan Flutter (Material Design) |
+| State management | `provider` |
+| HTTP request | `http` |
+| Local storage | `shared_preferences` |
+| Sumber data | Open-Meteo (tidak memerlukan API key) |
+
+---
+
+## 3. Struktur Folder Proyek (MVVM)
+
 ```text
 responsi_cuaca/
 ├── lib/
-│   ├── main.dart                       # Entry point aplikasi, inisialisasi Storage & MultiProvider
+│   ├── main.dart                       # Entry point, inisialisasi storage dan MultiProvider
 │   ├── models/
-│   │   ├── location.dart               # Model lokasi (Geocoding & Local Storage)
-│   │   └── weather.dart                # Model data cuaca terkini & prakiraan harian
+│   │   ├── location.dart               # Model lokasi (Geocoding API dan local storage)
+│   │   └── weather.dart                # Model cuaca terkini dan prakiraan harian
 │   ├── services/
-│   │   ├── weather_service.dart        # Service pemanggil HTTP GET Open-Meteo REST API
-│   │   └── storage_service.dart        # Service pembaca & penyimpan SharedPreferences
+│   │   ├── weather_service.dart        # HTTP GET ke Open-Meteo
+│   │   └── storage_service.dart        # Membaca dan menyimpan SharedPreferences
 │   ├── viewmodels/
-│   │   ├── weather_viewmodel.dart      # ViewModel layar cuaca utama & kontrol status cuaca
-│   │   ├── search_viewmodel.dart       # ViewModel pencarian kota & sinkronisasi API geocoding
-│   │   ├── favorites_viewmodel.dart    # ViewModel manajemen data favorit & riwayat
-│   │   └── settings_viewmodel.dart     # ViewModel manajemen satuan suhu & tema tampilan
+│   │   ├── weather_viewmodel.dart      # State layar cuaca utama
+│   │   ├── search_viewmodel.dart       # State pencarian kota (Geocoding API)
+│   │   ├── favorites_viewmodel.dart    # State data favorit
+│   │   └── settings_viewmodel.dart     # State satuan suhu dan tema
 │   ├── views/
-│   │   ├── main_navigation_screen.dart # NavigationBar utama dengan 4 tab menu
-│   │   ├── weather_screen.dart         # Layar tampilan cuaca terkini & ramalan 7 hari
-│   │   ├── search_screen.dart          # Layar input pencarian kota & hasil dari API
-│   │   ├── favorites_screen.dart       # Layar daftar favorit & riwayat pencarian
-│   │   └── settings_screen.dart        # Layar preferensi suhu (°C/°F) & tema aplikasi
+│   │   ├── main_navigation_screen.dart # NavigationBar utama (3 tab)
+│   │   ├── weather_screen.dart         # Cuaca terkini dan prakiraan 7 hari
+│   │   ├── search_screen.dart          # Input pencarian, hasil, dan riwayat
+│   │   └── favorites_screen.dart       # Daftar lokasi favorit
 │   ├── utils/
-│   │   └── weather_code.dart           # Konversi kode WMO ke teks Bahasa Indonesia & icon
+│   │   └── weather_code.dart           # Kode WMO ke teks Indonesia, ikon, dan foto latar
 │   └── theme/
-│       └── app_theme.dart              # Konfigurasi terpusat ThemeData (Light & Dark)
-├── ssan/                               # Folder tangkapan layar (screenshot aplikasi)
-├── pubspec.yaml                        # Konfigurasi dependensi project Flutter
-└── README.md                           # Dokumentasi teknis aplikasi
+│       └── app_theme.dart              # ThemeData terpusat (Light dan Dark)
+├── ssan/                               # Screenshot aplikasi
+├── pubspec.yaml                        # Dependensi proyek
+└── README.md                           # Dokumentasi
 ```
 
 ---
 
-## 3. Penjelasan Implementasi API (Open-Meteo)
+## 4. Implementasi API (Open-Meteo)
 
-Aplikasi menggunakan dua endpoint utama dari REST API Open-Meteo tanpa hardcode data cuaca:
+Aplikasi memakai dua endpoint resmi Open-Meteo, dengan metode **HTTP GET**.
+
+> **Data tidak statis.** Seluruh informasi cuaca diambil dari Open-Meteo API. Saat aplikasi pertama kali dibuka dan belum ada data di local storage, lokasi default "Semarang" tetap melakukan request ke API memakai koordinatnya (lat: -6.9932, lon: 110.4203), bukan data cuaca bawaan.
 
 ### a. Geocoding API (Pencarian Lokasi)
+
 - **Endpoint**: `https://geocoding-api.open-meteo.com/v1/search`
-- **Metode**: `HTTP GET`
 - **Parameter**:
-  - `name`: Nama kota yang dicari (contoh: `Semarang`, `Jakarta`).
-  - `count`: Jumlah hasil maksimum (`10`).
-  - `language`: Bahasa nama kota (`id` untuk Bahasa Indonesia).
-- **Format URL**:
-  `https://geocoding-api.open-meteo.com/v1/search?name={query}&count=10&language=id`
+    - `name`: nama kota yang dicari
+    - `count`: jumlah hasil maksimum (`10`)
+    - `language`: bahasa nama kota (`id`)
+- **Contoh URL**:
+  `https://geocoding-api.open-meteo.com/v1/search?name=Semarang&count=10&language=id`
 
 ### b. Weather Forecast API (Prakiraan Cuaca)
-- **Endpoint**: `https://api.open-meteo.com/v1/forecast`
-- **Metode**: `HTTP GET`
-- **Parameter Wajib yang Digunakan**:
-  - `latitude`: Koordinat lintang kota.
-  - `longitude`: Koordinat bujur lokasi kota.
-  - `current`: `temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m`
-  - `daily`: `weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max`
-  - `timezone`: `auto`
-  - `temperature_unit`: `celsius` atau `fahrenheit` (sesuai pengaturan pengguna).
 
-### c. Tabel Pemetaan 9 Field API ke UI:
+- **Endpoint**: `https://api.open-meteo.com/v1/forecast`
+- **Parameter**:
+    - `latitude` dan `longitude`: koordinat kota
+    - `current`: `temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m`
+    - `daily`: `weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max`
+    - `timezone`: `auto`
+    - `temperature_unit`: `celsius` atau `fahrenheit` (sesuai pilihan pengguna)
+
+### c. Pemetaan Field API ke Tampilan
+
 | No | Data Cuaca | Field API Open-Meteo | Komponen UI |
 |---|---|---|---|
-| 1 | Suhu saat ini | `current.temperature_2m` | Card Utama Cuaca Terkini |
-| 2 | Kelembapan | `current.relative_humidity_2m` | Card Detail Kelembapan (%) |
-| 3 | Suhu yang dirasakan | `current.apparent_temperature` | Card Detail "Terasa Seperti" |
-| 4 | Curah hujan | `current.precipitation` | Card Detail Curah Hujan (mm) |
-| 5 | Kode kondisi cuaca | `current.weather_code` | Ikon & Teks Cuaca (WMO) |
-| 6 | Kecepatan angin | `current.wind_speed_10m` | Card Detail Kecepatan Angin (km/h) |
-| 7 | Suhu maksimum harian | `daily.temperature_2m_max` | List Prakiraan 7 Hari |
-| 8 | Suhu minimum harian | `daily.temperature_2m_min` | List Prakiraan 7 Hari |
-| 9 | Peluang hujan maksimum | `daily.precipitation_probability_max`| List Prakiraan 7 Hari (%) |
+| 1 | Suhu saat ini | `current.temperature_2m` | Kartu utama cuaca terkini |
+| 2 | Kelembapan | `current.relative_humidity_2m` | Kartu detail kelembapan (%) |
+| 3 | Suhu yang dirasakan | `current.apparent_temperature` | Kartu detail "Terasa Seperti" |
+| 4 | Curah hujan | `current.precipitation` | Kartu detail curah hujan (mm) |
+| 5 | Kode kondisi cuaca | `current.weather_code` | Ikon, foto latar, dan teks cuaca WMO |
+| 6 | Kecepatan angin | `current.wind_speed_10m` | Kartu detail kecepatan angin (km/h) |
+| 7 | Suhu maksimum harian | `daily.temperature_2m_max` | Daftar prakiraan 7 hari |
+| 8 | Suhu minimum harian | `daily.temperature_2m_min` | Daftar prakiraan 7 hari |
+| 9 | Peluang hujan maksimum | `daily.precipitation_probability_max` | Daftar prakiraan 7 hari (%) |
 
 ---
 
-## 4. Penjelasan Penerapan Pola Arsitektur MVVM
-Arsitektur aplikasi secara tegas memisahkan tanggung jawab:
-1. **Model (`lib/models/`)**:
-   - `LocationModel` & `WeatherModel`: Mengubah payload JSON mentah dari HTTP Response menjadi entitas Dart yang strongly-typed dan null-safe.
-2. **View (`lib/views/`)**:
-   - Tidak pernah memanggil API atau `SharedPreferences` secara langsung.
-   - Bersifat reaktif: Hanya menampilkan UI berdasarkan properti dari ViewModel dan memicu aksi pengguna melalui pemanggilan method ViewModel.
-   - Menangani 3 kondisi utama di setiap screen yang berhubungan dengan API: **Loading**, **Data Kosong (Empty)**, dan **Error (dengan tombol Coba Lagi)**.
-3. **ViewModel (`lib/viewmodels/`)**:
-   - Mewarisi `ChangeNotifier` dari package Provider.
-   - Mengelola state (status loading, error message, model data).
-   - Menghubungkan View dengan Business Logic pada `WeatherService` dan `StorageService`.
-   - Mengirim notifikasi perubahan data ke View melalui `notifyListeners()`.
-4. **Service (`lib/services/`)**:
-   - `WeatherService`: Menangani murni networking HTTP GET dan penanganan kegagalan koneksi (*SocketException*, *HttpException*).
-   - `StorageService`: Menangani serialisasi dan persistensi lokal dengan `SharedPreferences`.
+## 5. Penerapan Arsitektur MVVM
+
+Tanggung jawab dipisah menjadi empat lapisan:
+
+1. **Model** (`lib/models/`)
+    - `LocationModel` dan `WeatherModel` mengubah JSON dari respons API menjadi objek Dart yang null-safe.
+2. **View** (`lib/views/`)
+    - Tidak memanggil API atau `SharedPreferences` secara langsung.
+    - Hanya membaca properti ViewModel dan memanggil method ViewModel saat pengguna berinteraksi.
+    - Menangani tiga kondisi pada screen yang memakai API: **Loading**, **Data Kosong**, dan **Error** (dengan tombol *Coba Lagi*).
+3. **ViewModel** (`lib/viewmodels/`)
+    - Turunan `ChangeNotifier` dari package Provider.
+    - Menyimpan state (status loading, pesan error, data) dan menghubungkan View dengan `WeatherService` serta `StorageService`.
+    - Memberi tahu View lewat `notifyListeners()`.
+4. **Service** (`lib/services/`)
+    - `WeatherService`: HTTP GET ke API dan penanganan kegagalan koneksi.
+    - `StorageService`: penyimpanan dan pemuatan data lokal dengan `SharedPreferences`.
+
+**Alur data:** `View` -> `ViewModel` -> `Service` -> API -> `Model` -> `ViewModel` -> `View`.
 
 ---
 
-## 5. Cara Menjalankan Aplikasi
-1. Pastikan Flutter SDK (versi stable) dan Android Studio / VS Code sudah terpasang.
-2. Hubungkan perangkat HP Android fisik (aktifkan USB Debugging) atau jalankan Android Emulator.
-3. Buka terminal di direktori proyek `D:\FlutterProjects\responsi_cuaca`:
-   ```bash
-   flutter pub get
-   flutter run
-   ```
+## 6. Cara Menjalankan Aplikasi
+
+1. Pastikan Flutter SDK (stable) dan Android Studio sudah terpasang.
+2. Sambungkan HP Android (aktifkan USB Debugging) atau jalankan emulator. Perangkat harus terhubung ke internet.
+3. Buka terminal di folder proyek, lalu jalankan:
+
+```bash
+flutter pub get
+flutter run
+```
 
 ---
 
-## 6. Tangkapan Layar Aplikasi (Screenshots)
-Simpan file tangkapan layar pada folder `ssan/` dengan format nama berikut:
+## 7. Tangkapan Layar Aplikasi (Screenshots)
 
-| No | Nama Layar | File Screenshot |
-|---|---|---|
-| 1 | Weather Screen (Cuaca Terkini & Prakiraan) | `![Weather Screen](ssan/01_weather_screen.png)` |
-| 2 | Weather Screen (Kondisi Error / Koneksi Mati) | `![Weather Error](ssan/02_weather_error.png)` |
-| 3 | Search Screen (Input & Hasil Pencarian) | `![Search Screen](ssan/03_search_screen.png)` |
-| 4 | Search Screen (Data Kosong / Tidak Ditemukan)| `![Search Empty](ssan/04_search_empty.png)` |
-| 5 | Favorites Screen (Daftar Favorit & Riwayat) | `![Favorites Screen](ssan/05_favorites_screen.png)` |
-| 6 | Settings Screen (Satuan Suhu & Tema) | `![Settings Screen](ssan/06_settings_screen.png)` |
+### Weather Screen (Tab Cuaca)
+
+| Cuaca Terkini | Prakiraan 7 Hari |
+|---|---|
+| <img src="ssan/tabCuaca.jpg" width="250"> | <img src="ssan/tabCuaca7hari.jpg" width="250"> |
+
+### Search Screen (Tab Cari)
+
+| Input Pencarian | Hasil Pencarian |
+|---|---|
+| <img src="ssan/cari.jpg" width="250"> | <img src="ssan/hasilCari.jpg" width="250"> |
+
+### Favorites Screen (Tab Favorit)
+
+| Daftar Favorit |
+|---|
+| <img src="ssan/favorit.jpg" width="250"> |
 
 ---
 
-## 7. Pengujian Mandiri
-- **Pencarian Kota**: Masukkan "Bandung" pada tab Cari, pilih hasil pencarian, dan periksa apakah cuaca berpindah ke kota Bandung.
-- **Favorit & Riwayat**: Tekan tombol hati, buka tab Favorit. Tutup aplikasi dan buka kembali; data favorit dan lokasi terakhir tetap tersimpan.
-- **Penanganan Error**: Matikan koneksi WiFi/Data, lalu tekan tombol "Coba Lagi" untuk memverifikasi tampilan penanganan error.
-- **Pencarian Kosong**: Ketik teks sembarang seperti "zzzxqw123" pada kolom pencarian untuk memverifikasi tampilan data kosong.
+## 8. Pengujian Mandiri
+
+- **Pencarian kota**: ketik "Bandung" di tab Cari, pilih hasilnya, lalu periksa apakah cuaca berpindah ke Bandung.
+- **Favorit**: tekan tombol hati pada layar cuaca atau hasil pencarian, lalu buka tab Favorit. Tutup dan buka aplikasi lagi; favorit dan lokasi terakhir tetap tersimpan.
+- **Penanganan error**: matikan WiFi atau data seluler, lalu tekan tombol "Coba Lagi" untuk melihat tampilan error.
+- **Pencarian kosong**: ketik teks acak seperti "zzzxqw123" untuk melihat tampilan data kosong.

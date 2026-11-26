@@ -4,9 +4,6 @@ import 'package:responsi_cuaca/models/location.dart';
 import 'package:responsi_cuaca/viewmodels/favorites_viewmodel.dart';
 import 'package:responsi_cuaca/viewmodels/weather_viewmodel.dart';
 
-// View: Screen Lokasi Favorit
-// Menampilkan daftar lokasi favorit yang disimpan pengguna.
-// Menerapkan MVVM: View hanya membaca FavoritesViewModel & WeatherViewModel.
 class FavoritesScreen extends StatelessWidget {
   final VoidCallback onLocationChosen;
 

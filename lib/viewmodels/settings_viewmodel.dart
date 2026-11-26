@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:responsi_cuaca/services/storage_service.dart';
 
-// ViewModel untuk Layar Pengaturan.
-// Mengatur preferensi pengguna: Satuan Suhu (°C / °F) dan Tema (Sistem / Terang / Gelap).
-// Preferensi disimpan di SharedPreferences via StorageService dan dipertahankan saat aplikasi dibuka ulang.
 class SettingsViewModel extends ChangeNotifier {
   final StorageService _storageService;
 

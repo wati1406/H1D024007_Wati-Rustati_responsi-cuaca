@@ -4,16 +4,8 @@ import 'package:responsi_cuaca/models/weather.dart';
 import 'package:responsi_cuaca/services/storage_service.dart';
 import 'package:responsi_cuaca/services/weather_service.dart';
 
-// Enum untuk status state tampilan cuaca
 enum WeatherState { initial, loading, loaded, empty, error }
 
-// ViewModel untuk Weather Screen sesuai pola arsitektur MVVM.
-// ALUR DATA MVVM:
-// [View] -> memanggil method ViewModel (misal: fetchWeather(), selectLocation())
-// [ViewModel] -> memanggil [WeatherService] / [StorageService] untuk mengambil data
-// [Service] -> melakukan HTTP GET / read SharedPreferences dan mengubah JSON menjadi [Model]
-// [ViewModel] -> menerima [Model], mengupdate state internal, lalu notifyListeners()
-// [View] -> mendengarkan perubahan state ViewModel via Consumer/Provider dan merekonstruksi UI secara otomatis.
 class WeatherViewModel extends ChangeNotifier {
   final WeatherService _weatherService;
   final StorageService _storageService;
@@ -31,7 +23,6 @@ class WeatherViewModel extends ChangeNotifier {
   String _temperatureUnit = 'celsius';
   bool _isFavorite = false;
 
-  // Getters untuk dibaca oleh View
   WeatherState get state => _state;
   WeatherModel? get weather => _weather;
   LocationModel? get selectedLocation => _selectedLocation;
@@ -44,9 +35,6 @@ class WeatherViewModel extends ChangeNotifier {
   bool get isEmpty => _state == WeatherState.empty;
   bool get isLoaded => _state == WeatherState.loaded;
 
-  // Inisialisasi awal saat aplikasi dibuka:
-  // Cek apakah ada lokasi tersimpan di riwayat / favorit.
-  // Jika belum ada, gunakan kota default "Semarang" yang tetap diambil dari API.
   Future<void> initializeWeather({String? preferredUnit}) async {
     if (preferredUnit != null) {
       _temperatureUnit = preferredUnit;
@@ -54,7 +42,6 @@ class WeatherViewModel extends ChangeNotifier {
       _temperatureUnit = _storageService.getTemperatureUnit();
     }
 
-    // Ambil lokasi terakhir dari local storage jika ada
     LocationModel? lastLocation = _storageService.getLastSelectedLocation();
 
     if (lastLocation == null) {
@@ -64,7 +51,6 @@ class WeatherViewModel extends ChangeNotifier {
       }
     }
 
-    // Default kota: Semarang (koordinat resmi Open-Meteo)
     final initialLocation = lastLocation ??
         LocationModel(
           id: 1627896,
@@ -78,7 +64,6 @@ class WeatherViewModel extends ChangeNotifier {
     await selectLocation(initialLocation);
   }
 
-  // Mengubah kota yang dipilih, menyimpan ke local storage, dan mengambil data cuaca dari API
   Future<void> selectLocation(LocationModel location) async {
     _selectedLocation = location;
     _checkFavoriteStatus();
@@ -87,7 +72,6 @@ class WeatherViewModel extends ChangeNotifier {
     await fetchWeather();
   }
 
-  // Mengambil cuaca dari Open-Meteo REST API via WeatherService
   Future<void> fetchWeather() async {
     if (_selectedLocation == null) {
       _state = WeatherState.empty;
@@ -100,7 +84,6 @@ class WeatherViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Panggilan ke Service (HTTP GET)
       final result = await _weatherService.fetchWeather(
         latitude: _selectedLocation!.latitude,
         longitude: _selectedLocation!.longitude,
@@ -118,7 +101,6 @@ class WeatherViewModel extends ChangeNotifier {
     }
   }
 
-  // Memperbarui satuan suhu (°C / °F) dan merefresh data API
   Future<void> setTemperatureUnit(String unit) async {
     if (_temperatureUnit == unit) return;
     _temperatureUnit = unit;
@@ -128,7 +110,6 @@ class WeatherViewModel extends ChangeNotifier {
     }
   }
 
-  // Menandai atau membatalkan kota favorit
   Future<void> toggleFavorite() async {
     if (_selectedLocation == null) return;
 

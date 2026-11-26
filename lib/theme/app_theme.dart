@@ -1,132 +1,100 @@
 import 'package:flutter/material.dart';
 
-// Konfigurasi tema terpusat (ThemeData) sesuai kaidah Material 3.
-// Menjamin konsistensi visual warna, typography, card, dan komponen di seluruh aplikasi.
 class AppTheme {
-  static const Color primarySeedColor = Color(0xFF1E88E5); // Modern Blue
+  static const Color primaryLight = Color(0xFF1976D2);
+  static const Color secondaryLight = Color(0xFF0288D1);
+  static const Color backgroundLight = Color(0xFFF8F9FA);
 
-  // Light Theme
+  static const Color primaryDark = Color(0xFF90CAF9);
+  static const Color secondaryDark = Color(0xFF81D4FA);
+  static const Color backgroundDark = Color(0xFF121212);
+
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: primarySeedColor,
+      seedColor: primaryLight,
       brightness: Brightness.light,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: colorScheme.surface,
+      scaffoldBackgroundColor: backgroundLight,
       appBarTheme: AppBarTheme(
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0,
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: colorScheme.onSurface,
+          color: Colors.black87,
         ),
       ),
       cardTheme: CardThemeData(
-        elevation: 2,
+        elevation: 1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: colorScheme.primary, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        elevation: 3,
-        indicatorColor: colorScheme.primaryContainer,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        clipBehavior: Clip.antiAlias,
       ),
       textTheme: const TextTheme(
-        headlineLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-        headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-        bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-        labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        bodyLarge: TextStyle(fontSize: 16),
+        bodyMedium: TextStyle(fontSize: 14),
+        bodySmall: TextStyle(fontSize: 12),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        elevation: 2,
+        height: 65,
+        indicatorColor: colorScheme.secondaryContainer,
       ),
     );
   }
 
-  // Dark Theme
   static ThemeData get darkTheme {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: primarySeedColor,
+      seedColor: primaryDark,
       brightness: Brightness.dark,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: colorScheme.surface,
+      scaffoldBackgroundColor: backgroundDark,
       appBarTheme: AppBarTheme(
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0,
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: colorScheme.onSurface,
+          color: Colors.white,
         ),
       ),
       cardTheme: CardThemeData(
-        elevation: 2,
+        elevation: 1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: colorScheme.primary, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        elevation: 3,
-        indicatorColor: colorScheme.primaryContainer,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        clipBehavior: Clip.antiAlias,
       ),
       textTheme: const TextTheme(
-        headlineLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-        headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-        bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-        labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        bodyLarge: TextStyle(fontSize: 16),
+        bodyMedium: TextStyle(fontSize: 14),
+        bodySmall: TextStyle(fontSize: 12),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        elevation: 2,
+        height: 65,
+        indicatorColor: colorScheme.secondaryContainer,
       ),
     );
   }

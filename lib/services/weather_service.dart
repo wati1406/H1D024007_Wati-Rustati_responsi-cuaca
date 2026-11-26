@@ -4,8 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:responsi_cuaca/models/location.dart';
 import 'package:responsi_cuaca/models/weather.dart';
 
-// Service untuk menangani semua panggilan HTTP GET ke Open-Meteo REST API.
-// Memisahkan logika jaringan dari UI/ViewModel sesuai prinsip MVVM.
 class WeatherService {
   static const String _geocodingBaseUrl =
       'https://geocoding-api.open-meteo.com/v1/search';
@@ -16,8 +14,6 @@ class WeatherService {
 
   WeatherService({http.Client? client}) : _client = client ?? http.Client();
 
-  // 1. HTTP GET Geocoding API: Mencari kota berdasarkan nama query
-  // URL: https://geocoding-api.open-meteo.com/v1/search?name=...&count=10&language=id
   Future<List<LocationModel>> searchLocations(String query) async {
     final cleanQuery = query.trim();
     if (cleanQuery.isEmpty) {
@@ -42,7 +38,6 @@ class WeatherService {
               )
               .toList();
         }
-        // Jika data['results'] tidak ada, berarti kota tidak ditemukan (data kosong)
         return [];
       } else {
         throw HttpException(
@@ -50,17 +45,13 @@ class WeatherService {
         );
       }
     } on SocketException {
-      throw const SocketException(
-        'Tidak ada koneksi internet. Periksa koneksi Anda dan coba lagi.',
-      );
+      throw const SocketException('Tidak dapat terhubung ke server.');
     } catch (e) {
       if (e is SocketException || e is HttpException) rethrow;
-      throw Exception('Terjadi kesalahan saat memuat data pencarian: $e');
+      throw Exception('Terjadi kesalahan saat mencari kota: $e');
     }
   }
 
-  // 2. HTTP GET Forecast API: Mengambil data cuaca berdasarkan koordinat
-  // Parameter sesuai PDF: latitude, longitude, current, daily, timezone=auto
   Future<WeatherModel> fetchWeather({
     required double latitude,
     required double longitude,
@@ -74,15 +65,10 @@ class WeatherService {
       'daily':
           'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
       'timezone': 'auto',
+      'temperature_unit': temperatureUnit,
     };
 
-    if (temperatureUnit == 'fahrenheit') {
-      queryParams['temperature_unit'] = 'fahrenheit';
-    }
-
-    final uri = Uri.parse(_forecastBaseUrl).replace(
-      queryParameters: queryParams,
-    );
+    final uri = Uri.parse(_forecastBaseUrl).replace(queryParameters: queryParams);
 
     try {
       final response = await _client.get(uri);
@@ -97,11 +83,11 @@ class WeatherService {
       }
     } on SocketException {
       throw const SocketException(
-        'Tidak dapat terhubung ke server Open-Meteo. Pastikan internet Anda aktif.',
+        'Tidak ada koneksi internet. Periksa koneksi Anda.',
       );
     } catch (e) {
       if (e is SocketException || e is HttpException) rethrow;
-      throw Exception('Terjadi kesalahan saat memuat data cuaca: $e');
+      throw Exception('Gagal memproses data cuaca: $e');
     }
   }
 }

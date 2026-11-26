@@ -4,9 +4,6 @@ import 'package:responsi_cuaca/utils/weather_code.dart';
 import 'package:responsi_cuaca/viewmodels/settings_viewmodel.dart';
 import 'package:responsi_cuaca/viewmodels/weather_viewmodel.dart';
 
-// View: Weather Screen (Layar Utama Cuaca).
-// Menampilkan cuaca saat ini dengan kartu latar adaptif kondisi cuaca,
-// tombol kecil pengatur tema & satuan suhu, serta prakiraan 7 hari bebas overflow.
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({super.key});
 
@@ -19,7 +16,6 @@ class WeatherScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Cuaca Terkini'),
         actions: [
-          // Tombol kecil pengatur Satuan Suhu (°C / °F)
           Consumer2<WeatherViewModel, SettingsViewModel>(
             builder: (context, weatherVm, settingsVm, _) {
               final isCelsius = settingsVm.temperatureUnit == 'celsius';
@@ -46,7 +42,6 @@ class WeatherScreen extends StatelessWidget {
               );
             },
           ),
-          // Tombol kecil pengatur Tema (Sistem / Gelap)
           Consumer<SettingsViewModel>(
             builder: (context, settingsVm, _) {
               final isDark = settingsVm.themeMode == ThemeMode.dark;
@@ -62,7 +57,6 @@ class WeatherScreen extends StatelessWidget {
               );
             },
           ),
-          // Tombol favorit
           Consumer<WeatherViewModel>(
             builder: (context, vm, _) {
               if (vm.selectedLocation == null) return const SizedBox.shrink();
@@ -80,7 +74,6 @@ class WeatherScreen extends StatelessWidget {
       ),
       body: Consumer<WeatherViewModel>(
         builder: (context, vm, child) {
-          // 1. Kondisi Loading
           if (vm.isLoading) {
             return Center(
               child: Column(
@@ -97,7 +90,6 @@ class WeatherScreen extends StatelessWidget {
             );
           }
 
-          // 2. Kondisi Error
           if (vm.isError) {
             return Center(
               child: Padding(
@@ -129,7 +121,6 @@ class WeatherScreen extends StatelessWidget {
             );
           }
 
-          // 3. Kondisi Data Kosong
           if (vm.isEmpty || vm.weather == null || vm.selectedLocation == null) {
             return Center(
               child: Padding(
@@ -155,7 +146,6 @@ class WeatherScreen extends StatelessWidget {
             );
           }
 
-          // 4. Kondisi Sukses
           final weather = vm.weather!;
           final location = vm.selectedLocation!;
           final current = weather.current;
@@ -171,7 +161,6 @@ class WeatherScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // CARD UTAMA: Foto Adaptif Cuaca + Shadow Kuning Cerah + Tipografi Rapi
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),
@@ -195,7 +184,6 @@ class WeatherScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                       child: Stack(
                         children: [
-                          // 1. Gambar Background Foto sesuai kondisi
                           Positioned.fill(
                             child: Image.network(
                               WeatherCodeHelper.getBackgroundImageUrl(current.weatherCode),
@@ -205,7 +193,6 @@ class WeatherScreen extends StatelessWidget {
                               },
                             ),
                           ),
-                          // 2. Lapisan Overlay Gelap agar seluruh teks putih terbaca kontras & jelas
                           Positioned.fill(
                             child: Container(
                               decoration: BoxDecoration(
@@ -220,13 +207,11 @@ class WeatherScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          // 3. Konten Teks Informasi Kota & Cuaca (Layout Bersih, Proporsional)
                           Padding(
                             padding: const EdgeInsets.all(22),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Baris Nama Kota & Region
                                 Row(
                                   children: [
                                     const Icon(Icons.location_on, size: 18, color: Colors.white),
@@ -267,8 +252,6 @@ class WeatherScreen extends StatelessWidget {
                                   ),
                                 ],
                                 const SizedBox(height: 24),
-
-                                // Baris Suhu Utama & Ikon Cuaca
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -317,10 +300,7 @@ class WeatherScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // INFORMASI TAMBAHAN (Suhu rasa, kelembapan, angin, curah hujan)
                   Text(
                     'Informasi Cuaca Terkini',
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -365,10 +345,7 @@ class WeatherScreen extends StatelessWidget {
                       );
                     },
                   ),
-
                   const SizedBox(height: 22),
-
-                  // PRAKIRAAN BEBERAPA HARI KE DEPAN (Bebas dari Overflow Strip Kuning/Merah)
                   Text(
                     'Prakiraan Cuaca 7 Hari ke Depan',
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -392,14 +369,12 @@ class WeatherScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                           child: Row(
                             children: [
-                              // Ikon cuaca
                               Icon(
                                 WeatherCodeHelper.getIcon(item.weatherCode),
                                 color: colorScheme.primary,
                                 size: 24,
                               ),
                               const SizedBox(width: 12),
-                              // Hari dan deskripsi kondisi (Expanded agar tidak overflow)
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,7 +416,6 @@ class WeatherScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              // Rentang Suhu Min / Max
                               Text(
                                 '${item.tempMin.toStringAsFixed(0)}° / ${item.tempMax.toStringAsFixed(0)}$unitSymbol',
                                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -455,7 +429,6 @@ class WeatherScreen extends StatelessWidget {
                       },
                     ),
                   ),
-
                   const SizedBox(height: 20),
                 ],
               ),

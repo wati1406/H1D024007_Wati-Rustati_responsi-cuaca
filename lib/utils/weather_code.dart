@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Helper utilitas untuk memetakan WMO Weather Code dari Open-Meteo
-// ke dalam deskripsi Bahasa Indonesia, IconData Material, dan gambar latar belakang adaptif.
 class WeatherCodeHelper {
   static String getDescription(int code) {
     switch (code) {
@@ -109,35 +107,26 @@ class WeatherCodeHelper {
     }
   }
 
-  // Mendapatkan URL foto berkualitas tinggi dari Unsplash sesuai kondisi cuaca
   static String getBackgroundImageUrl(int code) {
     if (code == 0 || code == 1) {
-      // Cerah / Terang
       return 'https://images.unsplash.com/photo-1601297183305-6df142704ea2?auto=format&fit=crop&w=800&q=80';
     } else if (code == 2 || code == 3) {
-      // Berawan
       return 'https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&w=800&q=80';
     } else if (code >= 51 && code <= 57) {
-      // Gerimis
       return 'https://images.unsplash.com/photo-1541919329513-35f7af297129?auto=format&fit=crop&w=800&q=80';
     } else if (code >= 61 && code <= 82) {
-      // Hujan
       return 'https://images.unsplash.com/photo-1519692933481-e162a57d6721?auto=format&fit=crop&w=800&q=80';
     } else if (code >= 95) {
-      // Badai Petir
       return 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?auto=format&fit=crop&w=800&q=80';
     } else {
-      // Default / Kabut / Salju
       return 'https://images.unsplash.com/photo-1485236715568-ddc5ee6ca227?auto=format&fit=crop&w=800&q=80';
     }
   }
 
-  // Apakah kondisi cuaca adalah cerah (untuk menambahkan shadow kuning cerah)
   static bool isSunny(int code) {
     return code == 0 || code == 1;
   }
 
-  // Format hari dari string ISO date (YYYY-MM-DD) ke nama hari dalam Bahasa Indonesia
   static String formatDayName(String isoDate) {
     try {
       final date = DateTime.parse(isoDate);

@@ -13,7 +13,6 @@ import 'package:responsi_cuaca/views/main_navigation_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inisialisasi SharedPreferences untuk Local Storage
   final sharedPreferences = await SharedPreferences.getInstance();
   final storageService = StorageService(sharedPreferences);
   final weatherService = WeatherService();
@@ -21,11 +20,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // Services
         Provider<WeatherService>.value(value: weatherService),
         Provider<StorageService>.value(value: storageService),
-
-        // ViewModels
         ChangeNotifierProvider<WeatherViewModel>(
           create: (_) => WeatherViewModel(
             weatherService: weatherService,
@@ -59,7 +55,6 @@ class ResponsiCuacaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mendengarkan perubahan tema dari SettingsViewModel
     return Consumer<SettingsViewModel>(
       builder: (context, settingsVm, child) {
         return MaterialApp(
