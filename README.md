@@ -167,11 +167,3 @@ flutter run
 |---|
 | <img src="ssan/favorit.jpg" width="250"> |
 
----
-
-## 8. Pengujian Mandiri
-
-- **Pencarian kota**: ketik "Bandung" di tab Cari, pilih hasilnya, lalu periksa apakah cuaca berpindah ke Bandung.
-- **Favorit**: tekan tombol hati pada layar cuaca atau hasil pencarian, lalu buka tab Favorit. Tutup dan buka aplikasi lagi; favorit dan lokasi terakhir tetap tersimpan.
-- **Penanganan error**: matikan WiFi atau data seluler, lalu tekan tombol "Coba Lagi" untuk melihat tampilan error.
-- **Pencarian kosong**: ketik teks acak seperti "zzzxqw123" untuk melihat tampilan data kosong.
