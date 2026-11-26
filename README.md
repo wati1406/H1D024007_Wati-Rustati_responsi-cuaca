@@ -84,8 +84,7 @@ Aplikasi memakai dua endpoint resmi Open-Meteo, dengan metode **HTTP GET**.
     - `name`: nama kota yang dicari
     - `count`: jumlah hasil maksimum (`10`)
     - `language`: bahasa nama kota (`id`)
-- **Contoh URL**:
-  `https://geocoding-api.open-meteo.com/v1/search?name=Semarang&count=10&language=id`
+- **Contoh URL**: https://youtu.be/xPVLgS0LZCc?si=G6ub5VTHbM_BdJqB
 
 ### b. Weather Forecast API (Prakiraan Cuaca)
 
